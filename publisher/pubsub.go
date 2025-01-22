@@ -7,6 +7,11 @@ import (
 	"log"
 )
 
+type PubSubConfig struct {
+	ProjectID string `env:"PUBSUB_PROJECT_ID"`
+	TopicID   string `env:"PUBSUB_TOPIC_ID"`
+}
+
 type PubSubPublisher struct {
 	topic *pubsub.Topic
 }
