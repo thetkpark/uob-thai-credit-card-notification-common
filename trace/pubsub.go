@@ -13,3 +13,11 @@ func GetCorrelationIdFromPubSubAttributes(attrs map[string]string) string {
 	}
 	return attrs[CorrelationIdKey]
 }
+
+func AttachCorrelationIdToPubSubAttributes(attrs map[string]string, correlationId string) map[string]string {
+	if attrs == nil {
+		attrs = make(map[string]string)
+	}
+	attrs[CorrelationIdKey] = correlationId
+	return attrs
+}

@@ -4,7 +4,9 @@ import (
 	"cloud.google.com/go/pubsub"
 	"context"
 	"encoding/json"
+	"github.com/thetkpark/uob-thai-credit-card-notification-common/trace"
 	"log"
+	"log/slog"
 )
 
 type PubSubConfig struct {
@@ -25,12 +27,19 @@ func NewPubSubPublisher(projectId, topicName string) *PubSubPublisher {
 	return &PubSubPublisher{topic: topic}
 }
 
-func (p PubSubPublisher) PublishMessage(ctx context.Context, msg interface{}, attrs map[string]string) error {
+func (p PubSubPublisher) PublishMessage(ctx context.Context, msg interface{}) error {
 	b, err := json.Marshal(msg)
 	if err != nil {
 		return err
 	}
 
+	correlationId, ok := ctx.Value(trace.CorrelationIdKey).(string)
+	if !ok || correlationId == "" {
+		slog.WarnContext(ctx, "Correlation ID not found in context. Generate a new one")
+		correlationId = trace.GenerateCorrelationId()
+	}
+
+	attrs := trace.AttachCorrelationIdToPubSubAttributes(nil, correlationId)
 	result := p.topic.Publish(ctx, &pubsub.Message{Data: b, Attributes: attrs})
 	if _, err = result.Get(ctx); err != nil {
 		return err
