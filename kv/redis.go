@@ -11,12 +11,12 @@ import (
 type RedisKVConfig struct {
 	URL       string        `env:"REDIS_URL"`
 	KeyPrefix string        `env:"REDIS_KEY_PREFIX"`
-	ttl       time.Duration `env:"REDIS_TTL"`
+	TTL       time.Duration `env:"REDIS_TTL"`
 }
 type RedisKV struct {
 	client *redis.Client
 	prefix string
-	ttl    time.Duration
+	TTL    time.Duration
 }
 
 func NewRedisKV(c RedisKVConfig) *RedisKV {
@@ -28,7 +28,7 @@ func NewRedisKV(c RedisKVConfig) *RedisKV {
 	return &RedisKV{
 		client: client,
 		prefix: c.KeyPrefix,
-		ttl:    c.ttl,
+		TTL:    c.TTL,
 	}
 }
 
@@ -37,7 +37,7 @@ func (r RedisKV) getKey(k string) string {
 }
 
 func (r RedisKV) Add(ctx context.Context, k string) error {
-	return r.client.Set(ctx, r.getKey(k), 1, r.ttl).Err()
+	return r.client.Set(ctx, r.getKey(k), 1, r.TTL).Err()
 }
 
 func (r RedisKV) Exist(ctx context.Context, k string) (bool, error) {
