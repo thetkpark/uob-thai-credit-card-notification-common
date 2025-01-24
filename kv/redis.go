@@ -9,9 +9,9 @@ import (
 )
 
 type RedisKVConfig struct {
-	URL       string        `ENV:"REDIS_URL"`
-	KeyPrefix string        `ENV:"REDIS_KEY_PREFIX"`
-	ttl       time.Duration `ENV:"REDIS_TTL"`
+	URL       string        `env:"REDIS_URL"`
+	KeyPrefix string        `env:"REDIS_KEY_PREFIX"`
+	ttl       time.Duration `env:"REDIS_TTL"`
 }
 type RedisKV struct {
 	client *redis.Client
