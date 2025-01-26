@@ -2,6 +2,7 @@ package kv
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/redis/go-redis/v9"
 	"log"
@@ -42,5 +43,12 @@ func (r RedisKV) Exist(ctx context.Context, k string) (bool, error) {
 }
 
 func (r RedisKV) Get(ctx context.Context, k string) (string, error) {
-	return r.client.Get(ctx, r.getKey(k)).Result()
+	v, err := r.client.Get(ctx, r.getKey(k)).Result()
+	if err != nil {
+		if errors.Is(err, redis.Nil) {
+			return "", nil
+		}
+		return "", err
+	}
+	return v, nil
 }
